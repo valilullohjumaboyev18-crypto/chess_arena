@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Kirish — Chess Arena{% endblock %}
+{% block content %}
+<div class="card auth-form">
+    <h2>Kirish</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <label>{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        {% endfor %}
+        {% if form.non_field_errors %}<ul class="errorlist">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        <button type="submit" class="btn btn-primary btn-block">Kirish</button>
+    </form>
+    <p style="margin-top:14px;color:var(--text-dim)">Akkount yo'qmi? <a href="{% url 'accounts:register' %}" style="color:var(--accent)">Ro'yxatdan o'ting</a></p>
+</div>
+{% endblock %}

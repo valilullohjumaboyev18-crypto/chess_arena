@@ -1,0 +1,5 @@
+SystemCheckError: System check identified some issues:
+
+ERRORS:
+accounts.Profile.avatar: (fields.E210) Cannot use ImageField because Pillow is not installed.
+	HINT: Get Pillow at https://pypi.org/project/Pillow/ or run command "python -m pip install Pillow".

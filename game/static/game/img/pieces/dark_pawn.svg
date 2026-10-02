@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs>
+      <linearGradient id="g_dark_pawn" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#8a5c33"/>
+        <stop offset="45%" stop-color="#6b4527"/>
+        <stop offset="100%" stop-color="#241609"/>
+      </linearGradient>
+      <radialGradient id="h_dark_pawn" cx="35%" cy="20%" r="60%">
+        <stop offset="0%" stop-color="#ffdca8" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#ffdca8" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="s_dark_pawn" x="-30%" y="-10%" width="160%" height="140%">
+        <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#000" flood-opacity="0.45"/>
+      </filter>
+    </defs><g filter="url(#s_dark_pawn)"><ellipse cx="50" cy="93" rx="30" ry="4" fill="#000" opacity="0.35" stroke="none"/><rect x="20" y="82" width="60" height="11" rx="4" fill="url(#g_dark_pawn)" stroke="#160d05" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M36 82 Q34 72 40 68 Q36 60 40 52 Q34 46 40 38 Q50 30 60 38 Q66 46 60 52 Q64 60 60 68 Q66 72 64 82 Z" fill="url(#g_dark_pawn)" stroke="#160d05" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><g style="mix-blend-mode:screen" fill="url(#h_dark_pawn)" stroke="none"><ellipse cx="50" cy="93" rx="30" ry="4" fill="#000" opacity="0.35" stroke="none"/><rect x="20" y="82" width="60" height="11" rx="4" fill="url(#h_dark_pawn)" stroke="none"/><path d="M36 82 Q34 72 40 68 Q36 60 40 52 Q34 46 40 38 Q50 30 60 38 Q66 46 60 52 Q64 60 60 68 Q66 72 64 82 Z" fill="url(#h_dark_pawn)" stroke="none"/></g></g></svg>

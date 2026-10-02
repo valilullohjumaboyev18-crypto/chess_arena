@@ -1,0 +1,28 @@
+{% extends "game/base.html" %}
+{% block title %}Musobaqa yaratish{% endblock %}
+{% block content %}
+<div class="panel">
+  <h2>Musobaqa yaratish</h2>
+  <p class="sub">Yagona eliminatsiya (bitta mag'lubiyat bilan chiqib ketish) bracket avtomatik tuziladi.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label for="tname">Musobaqa nomi</label>
+      <input type="text" id="tname" name="tname" placeholder="Masalan: Do'stlar kubogi" maxlength="80" required>
+    </div>
+    <div class="field">
+      <label for="name">Ismingiz (tashkilotchi)</label>
+      <input type="text" id="name" name="name" placeholder="Masalan: Aziz" maxlength="40" required>
+    </div>
+    <div class="field">
+      <label>Ishtirokchilar soni</label>
+      <div class="choice-row">
+        <label class="choice-pill"><input type="radio" name="size" value="4"> 4</label>
+        <label class="choice-pill"><input type="radio" name="size" value="8" checked> 8</label>
+        <label class="choice-pill"><input type="radio" name="size" value="16"> 16</label>
+      </div>
+    </div>
+    <button class="btn" type="submit">Musobaqa yaratish</button>
+  </form>
+</div>
+{% endblock %}

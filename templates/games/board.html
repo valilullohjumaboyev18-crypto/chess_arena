@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Game #{{ game.id }} — Chess Arena{% endblock %}
+{% block content %}
+
+{% if game.status == 'waiting' %}
+<div class="card" style="text-align:center">
+    <h2>Raqib kutilmoqda...</h2>
+    <p style="color:var(--text-dim)">Invite kodini do'stingizga yuboring:</p>
+    <h1 style="letter-spacing:3px;color:var(--accent)">{{ game.invite_code }}</h1>
+</div>
+{% endif %}
+
+{% if game.status == 'finished' %}
+<div class="result-banner">
+    {% if game.result == 'draw' %}
+        <h2>🤝 DRAW</h2>
+    {% else %}
+        <h2>🏆 {{ game.result|upper }} WINS</h2>
+    {% endif %}
+    <p style="color:var(--text-dim)">{{ game.get_end_reason_display }}</p>
+</div>
+{% endif %}
+
+<div class="board-wrapper">
+    <div class="board-side">
+        <div id="board" data-game-id="{{ game.id }}" data-fen="{{ game.fen }}"
+             data-user-color="{{ user_color|default:'' }}" data-status="{{ game.status }}"
+             data-is-bot="{{ game.is_vs_bot|yesno:'true,false' }}"></div>
+    </div>
+    <div class="side-panel">
+        <div class="player-badge">
+            <span>⚪ {% if game.white %}{{ game.white.username }}{% elif game.is_vs_bot %}Bot{% else %}—{% endif %}</span>
+            <span class="timer" id="white-timer">{{ game.white_time_ms }}</span>
+        </div>
+        <div class="player-badge">
+            <span>⚫ {% if game.black %}{{ game.black.username }}{% elif game.is_vs_bot %}Bot{% else %}—{% endif %}</span>
+            <span class="timer" id="black-timer">{{ game.black_time_ms }}</span>
+        </div>
+
+        <div class="card" style="padding:14px">
+            <h3 style="margin-top:0">Moves</h3>
+            <div class="move-list" id="move-list">
+                {% for m in moves %}
+                    <div><span>{{ m.ply }}.</span><span>{{ m.san }}</span></div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if game.status == 'active' and user_color %}
+        <div class="controls-row">
+            <button class="btn btn-danger btn-block" id="resign-btn">Resign</button>
+        </div>
+        {% endif %}
+        {% if game.status == 'finished' %}
+        <a href="{% url 'games:home' %}" class="btn btn-primary btn-block">Back to Lobby</a>
+        {% endif %}
+    </div>
+</div>
+
+<div id="promotion-modal" class="promotion-modal" style="display:none">
+    <div class="promotion-box">
+        <p>Piyodani nimaga aylantirasiz?</p>
+        <div class="promotion-choices">
+            <button data-piece="q">♛</button>
+            <button data-piece="r">♜</button>
+            <button data-piece="b">♝</button>
+            <button data-piece="n">♞</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.promotion-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 50; }
+.promotion-box { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; }
+.promotion-choices { display: flex; gap: 10px; margin-top: 14px; }
+.promotion-choices button { font-size: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; cursor: pointer; color: var(--text); }
+</style>
+
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'js/chessboard.js' %}"></script>
+{% endblock %}

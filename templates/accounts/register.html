@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Ro'yxatdan o'tish — Chess Arena{% endblock %}
+{% block content %}
+<div class="card auth-form">
+    <h2>Ro'yxatdan o'tish</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <label>{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<p style="color:var(--text-dim);font-size:.8rem;margin:-8px 0 10px">{{ field.help_text|safe }}</p>{% endif %}
+            {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary btn-block">Ro'yxatdan o'tish</button>
+    </form>
+    <p style="margin-top:14px;color:var(--text-dim)">Akkount bormi? <a href="{% url 'accounts:login' %}" style="color:var(--accent)">Kiring</a></p>
+</div>
+{% endblock %}

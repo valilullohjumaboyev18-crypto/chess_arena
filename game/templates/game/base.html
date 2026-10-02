@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Chess Arena{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'game/css/style.css' %}">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<header class="topbar">
+  <a href="{% url 'home' %}" class="brand">
+    <span class="brand-knight">&#9822;</span>
+    <span class="brand-text">Chess<em>Arena</em></span>
+  </a>
+  <nav class="topnav">
+    <a href="{% url 'bot_new' %}">Bot bilan</a>
+    <a href="{% url 'local_new' %}">Ikkalovlashib</a>
+    <a href="{% url 'friend_new' %}">Do'st bilan</a>
+    <a href="{% url 'tournament_new' %}">Musobaqa</a>
+  </nav>
+</header>
+<main class="page">
+  {% block content %}{% endblock %}
+</main>
+<footer class="foot">Chess Arena &middot; qishloqcha yog'ochdan yasalgan toshlar bilan</footer>
+</body>
+</html>

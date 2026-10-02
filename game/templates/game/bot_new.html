@@ -1,0 +1,31 @@
+{% extends "game/base.html" %}
+{% block title %}Bot bilan o'ynash{% endblock %}
+{% block content %}
+<div class="panel">
+  <h2>Bot bilan o'ynash</h2>
+  <p class="sub">Darajani va qaysi rangda o'ynashni tanlang.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label for="name">Ismingiz</label>
+      <input type="text" id="name" name="name" placeholder="Masalan: Aziz" maxlength="40">
+    </div>
+    <div class="field">
+      <label>Bot darajasi</label>
+      <div class="choice-row">
+        <label class="choice-pill"><input type="radio" name="difficulty" value="easy"> Kuchsiz</label>
+        <label class="choice-pill"><input type="radio" name="difficulty" value="medium" checked> O'rta</label>
+        <label class="choice-pill"><input type="radio" name="difficulty" value="hard"> Kuchli</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Rangingiz</label>
+      <div class="choice-row">
+        <label class="choice-pill"><input type="radio" name="color" value="white" checked> Oq</label>
+        <label class="choice-pill"><input type="radio" name="color" value="black"> Qora</label>
+      </div>
+    </div>
+    <button class="btn" type="submit">O'yinni boshlash</button>
+  </form>
+</div>
+{% endblock %}

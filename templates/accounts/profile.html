@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}{{ profile_user.username }} — Chess Arena{% endblock %}
+{% block content %}
+<div class="card">
+    <h2>{{ profile_user.username }}</h2>
+    <div class="stats-row" style="justify-content:flex-start">
+        <div class="stat-card"><div class="num">{{ profile.rating }}</div><div class="label">Rating</div></div>
+        <div class="stat-card"><div class="num">{{ profile.wins }}</div><div class="label">Wins</div></div>
+        <div class="stat-card"><div class="num">{{ profile.losses }}</div><div class="label">Losses</div></div>
+        <div class="stat-card"><div class="num">{{ profile.draws }}</div><div class="label">Draws</div></div>
+        <div class="stat-card"><div class="num">{{ profile.win_rate }}%</div><div class="label">Win rate</div></div>
+    </div>
+</div>
+<div class="card">
+    <h3>Game History</h3>
+    <table>
+        <thead><tr><th>Opponent</th><th>Color</th><th>Result</th><th>Date</th></tr></thead>
+        <tbody>
+        {% for g in games %}
+            <tr>
+                <td>{% if g.white == profile_user %}{{ g.black.username|default:"Bot" }}{% else %}{{ g.white.username|default:"Bot" }}{% endif %}</td>
+                <td>{% if g.white == profile_user %}White{% else %}Black{% endif %}</td>
+                <td>{{ g.result }} ({{ g.get_end_reason_display }})</td>
+                <td>{{ g.finished_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4" style="color:var(--text-dim)">Hali o'yin yo'q.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

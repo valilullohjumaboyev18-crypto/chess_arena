@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs>
+      <linearGradient id="g_light_bishop" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#fffaf0"/>
+        <stop offset="45%" stop-color="#f6ecd4"/>
+        <stop offset="100%" stop-color="#d9bd8a"/>
+      </linearGradient>
+      <radialGradient id="h_light_bishop" cx="35%" cy="20%" r="60%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="s_light_bishop" x="-30%" y="-10%" width="160%" height="140%">
+        <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#000" flood-opacity="0.45"/>
+      </filter>
+    </defs><g filter="url(#s_light_bishop)"><ellipse cx="50" cy="93" rx="30" ry="4" fill="#000" opacity="0.35" stroke="none"/><rect x="20" y="82" width="60" height="11" rx="4" fill="url(#g_light_bishop)" stroke="#8a6a3c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="31" y="70" width="38" height="14" rx="4" fill="url(#g_light_bishop)" stroke="#8a6a3c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M50 12 C34 24 32 44 46 58 C40 64 34 68 31 70 L69 70 C66 68 60 64 54 58 C68 44 66 24 50 12 Z" fill="url(#g_light_bishop)" stroke="#8a6a3c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="50" cy="12" r="5" fill="url(#g_light_bishop)" stroke="#8a6a3c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><g style="mix-blend-mode:screen" fill="url(#h_light_bishop)" stroke="none"><ellipse cx="50" cy="93" rx="30" ry="4" fill="#000" opacity="0.35" stroke="none"/><rect x="20" y="82" width="60" height="11" rx="4" fill="url(#h_light_bishop)" stroke="none"/><rect x="31" y="70" width="38" height="14" rx="4" fill="url(#h_light_bishop)" stroke="none"/><path d="M50 12 C34 24 32 44 46 58 C40 64 34 68 31 70 L69 70 C66 68 60 64 54 58 C68 44 66 24 50 12 Z" fill="url(#h_light_bishop)" stroke="none"/><circle cx="50" cy="12" r="5" fill="url(#h_light_bishop)" stroke="none"/></g></g></svg>

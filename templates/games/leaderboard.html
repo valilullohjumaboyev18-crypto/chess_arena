@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Leaderboard — Chess Arena{% endblock %}
+{% block content %}
+<div class="card">
+    <h2>🏅 Leaderboard</h2>
+    <table>
+        <thead><tr><th>#</th><th>Player</th><th>Rating</th><th>Games</th><th>Win rate</th></tr></thead>
+        <tbody>
+        {% for p in players %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{% url 'accounts:profile' p.user.username %}">{{ p.user.username }}</a></td>
+                <td>{{ p.rating }}</td>
+                <td>{{ p.games_played }}</td>
+                <td>{{ p.win_rate }}%</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5" style="color:var(--text-dim)">Hali o'yinchilar yo'q.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

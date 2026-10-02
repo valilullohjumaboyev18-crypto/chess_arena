@@ -1,0 +1,35 @@
+{% extends "game/base.html" %}
+{% block title %}Chess Arena{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Chess&nbsp;Arena</h1>
+  <p>Yog'och shohona toshlar bilan zamonaviy shaxmat platformasi. Bot bilan mashq qiling, do'stingizni chaqiring yoki musobaqa tashkil qiling.</p>
+</section>
+
+<div class="mode-grid">
+  <a class="mode-card" href="{% url 'bot_new' %}">
+    <span class="icon">&#9820;</span>
+    <h3>Bot bilan o'ynash</h3>
+    <p>Kuchsiz, o'rta yoki kuchli darajadagi kompyuter raqibiga qarshi offlayn mashq qiling.</p>
+    <span class="go">Boshlash &rarr;</span>
+  </a>
+  <a class="mode-card" href="{% url 'local_new' %}">
+    <span class="icon">&#9822;</span>
+    <h3>Ikkovlashib (bitta qurilma)</h3>
+    <p>Do'stingiz bilan bitta ekranda, navbat bilan bir xil qurilmada o'ynang.</p>
+    <span class="go">Boshlash &rarr;</span>
+  </a>
+  <a class="mode-card" href="{% url 'friend_new' %}">
+    <span class="icon">&#9819;</span>
+    <h3>Do'st bilan onlayn</h3>
+    <p>Xona yarating, havolani do'stingizga yuboring - u kirishi bilan o'yin boshlanadi.</p>
+    <span class="go">Boshlash &rarr;</span>
+  </a>
+  <a class="mode-card" href="{% url 'tournament_new' %}">
+    <span class="icon">&#9817;</span>
+    <h3>Musobaqa tashkil qiling</h3>
+    <p>Havola orqali do'stlaringizni taklif qiling - yagona eliminatsiya bracket avtomatik tuziladi.</p>
+    <span class="go">Boshlash &rarr;</span>
+  </a>
+</div>
+{% endblock %}

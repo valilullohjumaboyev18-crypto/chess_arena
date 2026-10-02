@@ -1,0 +1,16 @@
+{% extends "game/base.html" %}
+{% block title %}Musobaqaga qo'shilish{% endblock %}
+{% block content %}
+<div class="panel">
+  <h2>{{ t.name }}</h2>
+  <p class="sub">Musobaqaga qo'shilish uchun ismingizni kiriting.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label for="name">Ismingiz</label>
+      <input type="text" id="name" name="name" maxlength="40" required>
+    </div>
+    <button class="btn" type="submit">Qo'shilish</button>
+  </form>
+</div>
+{% endblock %}

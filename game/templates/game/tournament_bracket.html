@@ -1,0 +1,44 @@
+{% extends "game/base.html" %}
+{% block title %}{{ t.name }} - Bracket{% endblock %}
+{% block content %}
+<h2 style="text-align:center; font-size:34px;">{{ t.name }}</h2>
+
+{% if t.status == "finished" %}
+<div class="winner-banner">
+  <div style="font-size:14px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);">G'olib</div>
+  <h2>&#127942; {{ t.winner_name }}</h2>
+</div>
+{% elif my_active_game %}
+<div class="center-note" style="margin-bottom:24px;">
+  <a class="btn small" href="{% url 'game_detail' my_active_game.id %}">Sizning navbatdagi o'yiningiz &rarr;</a>
+</div>
+{% endif %}
+
+<div class="bracket">
+  {% for round_number, matches in rounds %}
+  <div class="bracket-round">
+    <h4>{% if forloop.last %}Final{% else %}{{ round_number }}-raund{% endif %}</h4>
+    {% for m in matches %}
+    <div class="match-card">
+      <div class="mp {% if m.winner_id == m.player1_id and m.winner_id %}winner{% elif m.winner_id and m.player1_id %}loser{% endif %}">
+        {{ m.player1.name|default:"—" }}
+      </div>
+      <div class="vs">vs</div>
+      <div class="mp {% if m.winner_id == m.player2_id and m.winner_id %}winner{% elif m.winner_id and m.player2_id %}loser{% endif %}">
+        {{ m.player2.name|default:"bye" }}
+      </div>
+      {% if not m.winner and not m.is_bye %}
+        <div class="center-note" style="margin-top:8px; font-size:11px;">o'ynalmoqda</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+
+<p class="center-note">Sahifa avtomatik yangilanadi. O'yiningiz boshlanganda tepadagi tugma orqali taxtaga o'tasiz.</p>
+
+<script>
+setTimeout(() => window.location.reload(), 6000);
+</script>
+{% endblock %}

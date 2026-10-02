@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}O'yinga qo'shilish — Chess Arena{% endblock %}
+{% block content %}
+<div class="card auth-form">
+    <h2>Do'st o'yiniga qo'shilish</h2>
+    {% if error %}<p style="color:var(--danger)">{{ error }}</p>{% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <label>Invite kod</label>
+        <input type="text" name="code" placeholder="CHESS-XXXXX" required>
+        <button type="submit" class="btn btn-primary btn-block">Qo'shilish</button>
+    </form>
+</div>
+{% endblock %}

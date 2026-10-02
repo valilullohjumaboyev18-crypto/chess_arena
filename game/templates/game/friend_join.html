@@ -1,0 +1,16 @@
+{% extends "game/base.html" %}
+{% block title %}O'yinga qo'shilish{% endblock %}
+{% block content %}
+<div class="panel">
+  <h2>O'yinga qo'shilish</h2>
+  <p class="sub"><strong>{{ game.white_name }}</strong> sizni shaxmat o'yiniga taklif qildi.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label for="name">Ismingiz</label>
+      <input type="text" id="name" name="name" placeholder="Masalan: Dilnoza" maxlength="40" required>
+    </div>
+    <button class="btn" type="submit">Qo'shilish va boshlash</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends "game/base.html" %}
+{% load static %}
+{% block title %}O'yin - Chess Arena{% endblock %}
+{% block content %}
+<div class="game-wrap">
+  <div class="board-col">
+    <div class="board-frame">
+      <div class="board-grid" id="boardGrid"></div>
+    </div>
+    {% if share_url %}
+    <div class="share-box" style="max-width:560px; width:100%; margin-top:18px;">
+      <input type="text" id="shareUrl" value="{{ share_url }}" readonly>
+      <button class="btn small" onclick="copyShare()">Nusxalash</button>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="side-panel">
+    <div class="player-row">
+      <div>
+        <div class="name" id="blackName">{{ game.black_name }}</div>
+        <div class="tag">Qora</div>
+      </div>
+      <div class="turn-badge" id="blackTurn">navbat</div>
+    </div>
+    <div class="player-row">
+      <div>
+        <div class="name" id="whiteName">{{ game.white_name }}</div>
+        <div class="tag">Oq</div>
+      </div>
+      <div class="turn-badge" id="whiteTurn">navbat</div>
+    </div>
+
+    <div class="status-line" id="statusLine">Yuklanmoqda...</div>
+
+    <div class="move-list" id="moveList"></div>
+
+    {% if game.mode == "bot" %}
+    <a class="btn secondary" style="margin-top:16px;" href="{% url 'bot_new' %}">Yangi o'yin</a>
+    {% elif game.mode == "local" %}
+    <a class="btn secondary" style="margin-top:16px;" href="{% url 'local_new' %}">Yangi o'yin</a>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+const GAME_ID = "{{ game.id }}";
+const MY_COLOR = "{{ my_color }}";
+const STATE_URL = "{% url 'game_state' game.id %}";
+const MOVE_URL = "{% url 'make_move' game.id %}";
+const PIECES_BASE = "{% static 'game/img/pieces/' %}";
+
+function getCookie(name) {
+  const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return v ? v.pop() : '';
+}
+const CSRF = getCookie('csrftoken');
+
+const grid = document.getElementById('boardGrid');
+let squares = {};
+const files = ['a','b','c','d','e','f','g','h'];
+
+function buildGrid() {
+  grid.innerHTML = '';
+  squares = {};
+  for (let r = 8; r >= 1; r--) {
+    for (let f = 0; f < 8; f++) {
+      const sqName = files[f] + r;
+      const div = document.createElement('div');
+      const isLight = (r + f) % 2 === 0;
+      div.className = 'sq ' + (isLight ? 'light-sq' : 'dark-sq');
+      div.dataset.square = sqName;
+      div.addEventListener('click', () => onSquareClick(sqName));
+      grid.appendChild(div);
+      squares[sqName] = div;
+    }
+  }
+}
+buildGrid();
+
+const PIECE_FILE = {
+  'K': 'light_king', 'Q': 'light_queen', 'R': 'light_rook', 'B': 'light_bishop', 'N': 'light_knight', 'P': 'light_pawn',
+  'k': 'dark_king', 'q': 'dark_queen', 'r': 'dark_rook', 'b': 'dark_bishop', 'n': 'dark_knight', 'p': 'dark_pawn',
+};
+
+function parseFenBoard(fen) {
+  const placement = fen.split(' ')[0];
+  const rows = placement.split('/');
+  const board = {};
+  for (let i = 0; i < 8; i++) {
+    const rank = 8 - i;
+    let file = 0;
+    for (const ch of rows[i]) {
+      if (/\d/.test(ch)) {
+        file += parseInt(ch, 10);
+      } else {
+        const sq = files[file] + rank;
+        board[sq] = ch;
+        file += 1;
+      }
+    }
+  }
+  return board;
+}
+
+let selected = null;
+let currentState = null;
+
+function renderBoard(state) {
+  currentState = state;
+  const board = parseFenBoard(state.fen);
+  Object.values(squares).forEach(sq => {
+    sq.innerHTML = '';
+    sq.classList.remove('selected', 'legal-target', 'legal-capture', 'last-move', 'in-check');
+  });
+  for (const [sq, piece] of Object.entries(board)) {
+    const img = document.createElement('img');
+    img.className = 'piece';
+    img.src = PIECES_BASE + PIECE_FILE[piece] + '.svg';
+    img.draggable = false;
+    squares[sq].appendChild(img);
+  }
+
+  // status text
+  let statusText = '';
+  if (state.status === 'finished') {
+    if (state.result === '1-0') statusText = (state.result_reason === 'mat' ? 'Mat! Oq g\'olib.' : "O'yin tugadi - Oq g'olib (" + state.result_reason + ")");
+    else if (state.result === '0-1') statusText = (state.result_reason === 'mat' ? "Mat! Qora g'olib." : "O'yin tugadi - Qora g'olib (" + state.result_reason + ")");
+    else statusText = "Durang (" + state.result_reason + ")";
+  } else if (state.status === 'waiting') {
+    statusText = "Raqib kutilmoqda...";
+  } else {
+    statusText = (state.turn === 'white' ? "Oqning navbati" : "Qoraning navbati") + (state.in_check ? " - Shoh xavfda!" : "");
+  }
+  document.getElementById('statusLine').textContent = statusText;
+
+  document.getElementById('whiteName').textContent = state.white_name;
+  document.getElementById('blackName').textContent = state.black_name;
+  document.getElementById('whiteTurn').classList.toggle('on', state.turn === 'white' && state.status === 'ongoing');
+  document.getElementById('blackTurn').classList.toggle('on', state.turn === 'black' && state.status === 'ongoing');
+
+  const ml = document.getElementById('moveList');
+  const moves = state.move_history;
+  let html = '';
+  for (let i = 0; i < moves.length; i += 2) {
+    const num = (i / 2) + 1;
+    html += `${num}. ${moves[i] || ''} ${moves[i+1] || ''}<br>`;
+  }
+  ml.innerHTML = html;
+  ml.scrollTop = ml.scrollHeight;
+
+  selected = null;
+  highlightSelection();
+}
+
+function canISelect(pieceChar) {
+  if (MY_COLOR === 'both') return true;
+  const isWhitePiece = pieceChar === pieceChar.toUpperCase();
+  return (MY_COLOR === 'white' && isWhitePiece) || (MY_COLOR === 'black' && !isWhitePiece);
+}
+
+function isMyTurn() {
+  if (!currentState) return false;
+  if (currentState.status !== 'ongoing') return false;
+  if (MY_COLOR === 'both') return true;
+  return MY_COLOR === currentState.turn;
+}
+
+function highlightSelection() {
+  Object.values(squares).forEach(sq => sq.classList.remove('selected', 'legal-target', 'legal-capture'));
+  if (!selected || !currentState) return;
+  squares[selected].classList.add('selected');
+  const board = parseFenBoard(currentState.fen);
+  currentState.legal_moves.forEach(uci => {
+    if (uci.startsWith(selected)) {
+      const dest = uci.substring(2, 4);
+      if (board[dest]) squares[dest].classList.add('legal-capture');
+      else squares[dest].classList.add('legal-target');
+    }
+  });
+}
+
+function onSquareClick(sqName) {
+  if (!currentState || currentState.status !== 'ongoing') return;
+  const board = parseFenBoard(currentState.fen);
+  const piece = board[sqName];
+
+  if (selected) {
+    if (selected === sqName) { selected = null; highlightSelection(); return; }
+    const candidateMoves = currentState.legal_moves.filter(m => m.startsWith(selected) && m.substring(2,4) === sqName);
+    if (candidateMoves.length > 0) {
+      let uci = candidateMoves[0];
+      // handle promotion - default to queen
+      if (candidateMoves.some(m => m.length === 5)) {
+        uci = selected + sqName + 'q';
+      }
+      submitMove(uci);
+      return;
+    }
+    if (piece && canISelect(piece) && isMyTurn()) {
+      selected = sqName;
+      highlightSelection();
+      return;
+    }
+    selected = null;
+    highlightSelection();
+    return;
+  }
+
+  if (piece && canISelect(piece) && isMyTurn()) {
+    selected = sqName;
+    highlightSelection();
+  }
+}
+
+async function submitMove(uci) {
+  selected = null;
+  try {
+    const res = await fetch(MOVE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+      body: JSON.stringify({ move: uci }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      await refreshState();
+      return;
+    }
+    renderBoard(data);
+  } catch (e) {
+    await refreshState();
+  }
+}
+
+async function refreshState() {
+  try {
+    const res = await fetch(STATE_URL);
+    const data = await res.json();
+    renderBoard(data);
+  } catch (e) {}
+}
+
+refreshState();
+setInterval(() => {
+  if (!currentState || currentState.status !== 'finished') refreshState();
+}, 2000);
+
+function copyShare(){
+  const el = document.getElementById('shareUrl');
+  if (!el) return;
+  el.select(); el.setSelectionRange(0, 999);
+  navigator.clipboard.writeText(el.value);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Chess Arena — Home{% endblock %}
+{% block content %}
+<section class="hero">
+    <h1>PLAY CHESS. CHALLENGE FRIENDS.<br>BECOME A CHAMPION.</h1>
+    <p>Real chess rules. Real-time games. Real ratings.</p>
+    <div class="hero-buttons">
+        {% if user.is_authenticated %}
+            <a href="#bot-section" class="btn btn-primary">Play vs Bot</a>
+            <a href="{% url 'games:create_friend_game' %}" class="btn btn-secondary">Play with Friend</a>
+            <a href="{% url 'games:join_friend_game' %}" class="btn">Join Game</a>
+        {% else %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary">Boshlash</a>
+            <a href="{% url 'accounts:login' %}" class="btn">Kirish</a>
+        {% endif %}
+    </div>
+</section>
+
+<div class="stats-row">
+    <div class="stat-card"><div class="num">{{ total_players }}</div><div class="label">Players</div></div>
+    <div class="stat-card"><div class="num">{{ active_games }}</div><div class="label">Active Games</div></div>
+    <div class="stat-card"><div class="num">5</div><div class="label">Bot Levels</div></div>
+</div>
+
+{% if user.is_authenticated %}
+<div class="card" id="bot-section">
+    <h2>🤖 Play vs Bot</h2>
+    <p style="color:var(--text-dim)">Stockfish engine, real difficulty levels.</p>
+    <div class="difficulty-grid">
+        <a href="{% url 'games:new_bot_game' 1 %}" class="btn">1 — Beginner</a>
+        <a href="{% url 'games:new_bot_game' 2 %}" class="btn">2 — Easy</a>
+        <a href="{% url 'games:new_bot_game' 3 %}" class="btn">3 — Medium</a>
+        <a href="{% url 'games:new_bot_game' 4 %}" class="btn">4 — Hard</a>
+        <a href="{% url 'games:new_bot_game' 5 %}" class="btn">5 — Expert</a>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <h2>🏆 Top Players</h2>
+    <table>
+        <thead><tr><th>#</th><th>Player</th><th>Rating</th><th>W/L/D</th></tr></thead>
+        <tbody>
+        {% for p in top_players %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{% url 'accounts:profile' p.user.username %}">{{ p.user.username }}</a></td>
+                <td>{{ p.rating }}</td>
+                <td>{{ p.wins }}/{{ p.losses }}/{{ p.draws }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4" style="color:var(--text-dim)">Hali o'yinchilar yo'q.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

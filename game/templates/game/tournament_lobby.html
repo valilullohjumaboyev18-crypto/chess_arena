@@ -1,0 +1,68 @@
+{% extends "game/base.html" %}
+{% block title %}{{ t.name }} - Lobbi{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:560px;">
+  <h2>{{ t.name }}</h2>
+  <p class="sub">Tashkilotchi: {{ t.creator_name }} &middot; {{ t.max_players }} kishilik bracket</p>
+
+  <div class="share-box">
+    <input type="text" id="shareUrl" value="{{ share_url }}" readonly>
+    <button class="btn small" onclick="copyShare()">Nusxalash</button>
+  </div>
+
+  {% if not joined %}
+  <form method="post" action="{% url 'tournament_join' t.id %}" style="margin-bottom:20px;">
+    {% csrf_token %}
+    <div class="field">
+      <label for="name">Ismingiz</label>
+      <input type="text" id="name" name="name" maxlength="40" required>
+    </div>
+    <button class="btn" type="submit">Musobaqaga qo'shilish</button>
+  </form>
+  {% endif %}
+
+  <h3 style="font-size:18px; margin-bottom:6px;">Ishtirokchilar (<span id="pcount">{{ t.players.count }}</span>/{{ t.max_players }})</h3>
+  <ul class="lobby-players" id="playerList">
+    {% for p in t.players.all %}
+    <li><span>{{ p.name }}</span><span class="seed">#{{ p.seed }}</span></li>
+    {% endfor %}
+  </ul>
+
+  {% if is_creator %}
+  <form method="post" action="{% url 'tournament_start' t.id %}">
+    {% csrf_token %}
+    <button class="btn" type="submit">Musobaqani boshlash</button>
+  </form>
+  <p class="center-note">Kamida 2 kishi qo'shilsa boshlashingiz mumkin. To'lmagan joylar avtomatik "bye" (bepul o'tish) bo'ladi.</p>
+  {% else %}
+  <p class="center-note">Tashkilotchi musobaqani boshlashini kuting...</p>
+  {% endif %}
+</div>
+
+<script>
+function copyShare(){
+  const el = document.getElementById('shareUrl');
+  el.select(); el.setSelectionRange(0, 999);
+  navigator.clipboard.writeText(el.value);
+}
+async function poll(){
+  try {
+    const res = await fetch("{% url 'tournament_state' t.id %}");
+    const data = await res.json();
+    if (data.status !== 'waiting') {
+      window.location.href = "{% url 'tournament_bracket' t.id %}";
+      return;
+    }
+    document.getElementById('pcount').textContent = data.count;
+    const ul = document.getElementById('playerList');
+    ul.innerHTML = '';
+    data.players.forEach((name, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${name}</span><span class="seed">#${i+1}</span>`;
+      ul.appendChild(li);
+    });
+  } catch(e) {}
+}
+setInterval(poll, 2500);
+</script>
+{% endblock %}
